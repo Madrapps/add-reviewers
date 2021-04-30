@@ -15,9 +15,10 @@ try {
   if (debugMode) core.info(`reviewers: ${reviewers}`);
 
   const context = github.context;
-  const payload = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload}`);
+  const payload1 = JSON.stringify(github.context.payload, undefined, 2)
+  console.log(`The event payload: ${payload1}`);
 
+  const payload = context.payload;
   const prNumber = payload.pull_request.number;
   const user = payload.user.login;
 
