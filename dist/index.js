@@ -5913,9 +5913,6 @@ async function action() {
         if (debugMode) core.info(`reviewers: ${reviewers}`);
 
         const context = github.context;
-        const payload1 = JSON.stringify(github.context.payload, undefined, 2)
-        console.log(`The event payload: ${payload1}`);
-
         const payload = context.payload;
         const prNumber = payload.pull_request.number;
         const user = payload.pull_request.user.login;
@@ -5942,8 +5939,37 @@ async function action() {
         const response1 = JSON.stringify(response, undefined, 2)
         core.info(`Reviews: ${response1}`);
 
+        const reviews = new Map();
+        response.data.forEach(review => {
+            reviews.set(review.user.login, review.state);
+        });
+
+        if (debugMode) {
+            core.info(`Latest Reviews`);
+            reviews.forEach((value, key) => {
+                core.info(`${key} = ${value}`);
+            });
+        }
+
         // Remove the current user who created the PR
-        const finalReviewers = reviewers.filter(reviewer => reviewer != user);
+        const userRemovedReviewers = reviewers.filter(reviewer => reviewer != user);
+        const finalReviewers = [];
+        userRemovedReviewers.forEach(reviewer => {
+            const rev = reviews.get(reviewer);
+            if (rev == null) {
+                finalReviewers.push(reviewer);
+            } else {
+                if (rev == 'CHANGES_REQUESTED') {
+                    if (debugMode) core.info(`Changes Requested: Request re-review from ${reviewer}`);
+                    finalReviewers.push(reviewer);
+                } else if (rev == 'APPROVED') {
+                    if (debugMode) core.info(`Approved: Request re-review from ${reviewer}`);
+                    core.info(`${key} = ${value}`);
+                } else {
+                    finalReviewers.push(reviewer);
+                }
+            }
+        });
         if (debugMode) core.info(`finalReviewers: ${finalReviewers}`);
         const params = {
             ...context.repo,
