@@ -7,6 +7,14 @@ inputs:
   reviewers:
     description: "Comma separated list of reviewers"
     required: true
+  re-request-when-changes-requested:
+    description: "When a reviewer has requested for changes, Re-request review from them"
+    required: false
+    default: "false"
+  re-request-when-approved:
+    description: "When a reviewer has approved, Re-request review from them"
+    required: false
+    default: "false"
   debug-mode:
     description: "Run the action in debug mode and get debug logs printed in console"
     required: false

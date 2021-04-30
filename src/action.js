@@ -4,6 +4,8 @@ const github = require('@actions/github');
 async function action() {
     try {
         const reviewers = core.getInput('reviewers').split(",");
+        const reRequestWhenChangesRequested = (core.getInput('re-request-if-changes-requested') === 'true');
+        const reRequestWhenApproved = (core.getInput('re-request-if-approved') === 'true');
         const debugMode = (core.getInput('debug-mode') === 'true');
 
         const event = github.context.eventName;
@@ -13,7 +15,7 @@ async function action() {
             throw `Only pull request is supported, ${github.context.eventName} not supported.`;
         }
 
-        if (debugMode) core.info(`reviewers: ${reviewers}`);
+        if (debugMode) core.info(`Input reviewers: ${reviewers}`);
 
         const context = github.context;
         const payload = context.payload;
@@ -25,25 +27,14 @@ async function action() {
 
         const client = github.getOctokit(core.getInput("token"));
 
-        // const params1 = {
-        //     ...context.repo,
-        //     pull_number: prNumber,
-        // };
-        // const response = await client.pulls.listRequestedReviewers(params1);
-        // core.info(`requested Reviewers: ${response}`);
-        // const response1 = JSON.stringify(response, undefined, 2)
-        // console.log(`The event payload: ${response1}`);
-
-        const params1 = {
+        const reviewsParam = {
             ...context.repo,
             pull_number: prNumber,
         };
-        const response = await client.pulls.listReviews(params1);
-        const response1 = JSON.stringify(response, undefined, 2)
-        core.info(`Reviews: ${response1}`);
+        const reviewsResponse = await client.pulls.listReviews(reviewsParam);
 
         const reviews = new Map();
-        response.data.forEach(review => {
+        reviewsResponse.data.forEach(review => {
             reviews.set(review.user.login, review.state);
         });
 
@@ -60,13 +51,23 @@ async function action() {
         userRemovedReviewers.forEach(reviewer => {
             const rev = reviews.get(reviewer);
             if (rev == null) {
+                if (debugMode) core.info(`New Reviewer: Request review from ${reviewer}`);
                 finalReviewers.push(reviewer);
             } else {
                 if (rev == 'CHANGES_REQUESTED') {
-                    if (debugMode) core.info(`Changes Requested: Request re-review from ${reviewer}`);
-                    finalReviewers.push(reviewer);
+                    if (reRequestWhenChangesRequested) {
+                        if (debugMode) core.info(`Changes Requested: Request re-review from ${reviewer}`);
+                        finalReviewers.push(reviewer);
+                    } else {
+                        if (debugMode) core.info(`Changes Requested: Not requesting re-review from ${reviewer}`);
+                    }
                 } else if (rev == 'APPROVED') {
-                    if (debugMode) core.info(`Approved: Not requesting re-review from ${reviewer}`);
+                    if (reRequestWhenApproved) {
+                        if (debugMode) core.info(`Approved: Request re-review from ${reviewer}`);
+                        finalReviewers.push(reviewer);
+                    } else {
+                        if (debugMode) core.info(`Approved: Not requesting re-review from ${reviewer}`);
+                    }
                 } else {
                     finalReviewers.push(reviewer);
                 }
@@ -78,9 +79,7 @@ async function action() {
             pull_number: prNumber,
             reviewers: finalReviewers,
         };
-
         await client.pulls.requestReviewers(params);
-
     } catch (error) {
         core.setFailed(error.message);
     }
