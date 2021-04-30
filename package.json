@@ -1,0 +1,20 @@
+{
+  "name": "add-reviewer-action",
+  "version": "1.0.0",
+  "description": "Github action that add Reviewers to the Pull Request",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git@github.com-thsaravana:Madrapps/add-reviewer-action.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@actions/core": "^1.2.7",
+    "@actions/github": "^4.0.0"
+  }
+}
