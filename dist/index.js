@@ -5906,8 +5906,6 @@ async function action() {
         const debugMode = (core.getInput('debug-mode') === 'true');
 
         const event = github.context.eventName;
-        core.info(`Event is ${event}`);
-
         if (event != 'pull_request') {
             throw `Only pull request is supported, ${github.context.eventName} not supported.`;
         }
