@@ -5963,8 +5963,7 @@ async function action() {
                     if (debugMode) core.info(`Changes Requested: Request re-review from ${reviewer}`);
                     finalReviewers.push(reviewer);
                 } else if (rev == 'APPROVED') {
-                    if (debugMode) core.info(`Approved: Request re-review from ${reviewer}`);
-                    core.info(`${key} = ${value}`);
+                    if (debugMode) core.info(`Approved: Not requesting re-review from ${reviewer}`);
                 } else {
                     finalReviewers.push(reviewer);
                 }
