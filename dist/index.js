@@ -5892,56 +5892,75 @@ function wrappy (fn, cb) {
 
 /***/ }),
 
-/***/ 281:
-/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
+/***/ 47:
+/***/ ((module, __unused_webpack_exports, __nccwpck_require__) => {
 
 const core = __nccwpck_require__(934);
 const github = __nccwpck_require__(794);
 
-try {
-  const reviewers = core.getInput('reviewers').split(",");
-  const debugMode = (core.getInput('debug-mode') === 'true');
+async function action() {
+    try {
+        const reviewers = core.getInput('reviewers').split(",");
+        const debugMode = (core.getInput('debug-mode') === 'true');
 
-  const event = github.context.eventName;
-  core.info(`Event is ${event}`);
+        const event = github.context.eventName;
+        core.info(`Event is ${event}`);
 
-  if (event != 'pull_request') {
-    throw `Only pull request is supported, ${github.context.eventName} not supported.`;
-  }
+        if (event != 'pull_request') {
+            throw `Only pull request is supported, ${github.context.eventName} not supported.`;
+        }
 
-  if (debugMode) core.info(`reviewers: ${reviewers}`);
+        if (debugMode) core.info(`reviewers: ${reviewers}`);
 
-  const context = github.context;
-  const payload1 = JSON.stringify(github.context.payload, undefined, 2)
-  console.log(`The event payload: ${payload1}`);
+        const context = github.context;
+        const payload1 = JSON.stringify(github.context.payload, undefined, 2)
+        console.log(`The event payload: ${payload1}`);
 
-  const payload = context.payload;
-  const prNumber = payload.pull_request.number;
-  const user = payload.pull_request.user.login;
+        const payload = context.payload;
+        const prNumber = payload.pull_request.number;
+        const user = payload.pull_request.user.login;
 
-  if (debugMode) core.info(`prNumber: ${prNumber}`);
-  if (debugMode) core.info(`user: ${user}`);
+        if (debugMode) core.info(`prNumber: ${prNumber}`);
+        if (debugMode) core.info(`user: ${user}`);
 
-  const client = github.getOctokit(core.getInput("token"));
+        const client = github.getOctokit(core.getInput("token"));
 
-  const params1 = {
-    ...context.repo,
-    pull_number: prNumber,
-  };
-  const response = client.pulls.listRequestedReviewers(params1);
-  core.info(`requested Reviewers: ${response}`);
+        const params1 = {
+            ...context.repo,
+            pull_number: prNumber,
+        };
+        const response = await client.pulls.listRequestedReviewers(params1);
+        core.info(`requested Reviewers: ${response}`);
 
-  const params = {
-    ...context.repo,
-    pull_number: prNumber,
-    reviewers: reviewers,
-  };
+        const params = {
+            ...context.repo,
+            pull_number: prNumber,
+            reviewers: reviewers,
+        };
 
-  client.pulls.requestReviewers(params);
+        client.pulls.requestReviewers(params);
 
-} catch (error) {
-  core.setFailed(error.message);
+    } catch (error) {
+        core.setFailed(error.message);
+    }
 }
+
+module.exports = {
+    action
+}
+
+/***/ }),
+
+/***/ 281:
+/***/ ((__unused_webpack_module, __unused_webpack_exports, __nccwpck_require__) => {
+
+const core = __nccwpck_require__(934);
+const action = __nccwpck_require__(47);
+
+action.action().catch(error => {
+  core.setFailed(error.message);
+});
+
 
 /***/ }),
 
