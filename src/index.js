@@ -2,14 +2,22 @@ const core = require('@actions/core');
 const github = require('@actions/github');
 
 try {
-  // `who-to-greet` input defined in action metadata file
-  const nameToGreet = core.getInput('who-to-greet');
-  console.log(`Hello ${nameToGreet}!`);
-  const time = (new Date()).toTimeString();
-  core.setOutput("time", time);
-  // Get the JSON webhook payload for the event that triggered the workflow
+  const reviewers = core.getInput('reviewers').split(",");
+  const debugMode = parseBooleans(core.getInput('debug-mode'));
+
+  const event = github.context.eventName;
+  core.info(`Event is ${event}`);
+
+  if (event != 'pull_request') {
+    throw `Only pull request is supported, ${github.context.eventName} not supported.`;
+  }
+
+  if (debugMode) core.info(`reviewers: ${reviewers}`);
+
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
+
+  const client = github.getOctokit(core.getInput("token"));
 } catch (error) {
   core.setFailed(error.message);
 }
