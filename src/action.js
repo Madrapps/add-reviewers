@@ -34,6 +34,8 @@ async function action() {
         };
         const response = await client.pulls.listRequestedReviewers(params1);
         core.info(`requested Reviewers: ${response}`);
+        const response1 = JSON.stringify(response, undefined, 2)
+        console.log(`The event payload: ${response1}`);
 
         const params = {
             ...context.repo,
