@@ -5917,7 +5917,7 @@ try {
 
   const payload = context.payload;
   const prNumber = payload.pull_request.number;
-  const user = payload.user.login;
+  const user = payload.pull_request.user.login;
 
   if (debugMode) core.info(`prNumber: ${prNumber}`);
   if (debugMode) core.info(`user: ${user}`);
