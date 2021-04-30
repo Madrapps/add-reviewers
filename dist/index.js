@@ -5901,8 +5901,8 @@ const github = __nccwpck_require__(794);
 async function action() {
     try {
         const reviewers = core.getInput('reviewers').split(",");
-        const reRequestWhenChangesRequested = (core.getInput('re-request-if-changes-requested') === 'true');
-        const reRequestWhenApproved = (core.getInput('re-request-if-approved') === 'true');
+        const reRequestWhenChangesRequested = (core.getInput('re-request-when-changes-requested') === 'true');
+        const reRequestWhenApproved = (core.getInput('re-request-when-approved') === 'true');
         const debugMode = (core.getInput('debug-mode') === 'true');
 
         const event = github.context.eventName;
