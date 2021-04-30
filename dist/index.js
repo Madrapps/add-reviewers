@@ -5911,10 +5911,26 @@ try {
 
   if (debugMode) core.info(`reviewers: ${reviewers}`);
 
+  const context = github.context;
   const payload = JSON.stringify(github.context.payload, undefined, 2)
   console.log(`The event payload: ${payload}`);
 
+  const prNumber = payload.pull_request.number;
+  const user = payload.user.login;
+
+  if (debugMode) core.info(`prNumber: ${prNumber}`);
+  if (debugMode) core.info(`user: ${user}`);
+
   const client = github.getOctokit(core.getInput("token"));
+
+  const params = {
+    ...context.repo,
+    pull_number: prNumber,
+    reviewers: reviewers,
+  };
+
+  client.pulls.requestReviewers(params);
+
 } catch (error) {
   core.setFailed(error.message);
 }
