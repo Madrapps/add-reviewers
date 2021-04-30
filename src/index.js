@@ -27,6 +27,13 @@ try {
 
   const client = github.getOctokit(core.getInput("token"));
 
+  const params1 = {
+    ...context.repo,
+    pull_number: prNumber,
+  };
+  const response = client.pulls.listRequestedReviewers(params1);
+  core.info(`requested Reviewers: ${response}`);
+
   const params = {
     ...context.repo,
     pull_number: prNumber,
