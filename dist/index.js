@@ -5900,7 +5900,7 @@ const github = __nccwpck_require__(794);
 
 try {
   const reviewers = core.getInput('reviewers').split(",");
-  const debugMode = parseBooleans(core.getInput('debug-mode'));
+  const debugMode = (core.getInput('debug-mode') === 'true');
 
   const event = github.context.eventName;
   core.info(`Event is ${event}`);

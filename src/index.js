@@ -3,7 +3,7 @@ const github = require('@actions/github');
 
 try {
   const reviewers = core.getInput('reviewers').split(",");
-  const debugMode = parseBooleans(core.getInput('debug-mode'));
+  const debugMode = (core.getInput('debug-mode') === 'true');
 
   const event = github.context.eventName;
   core.info(`Event is ${event}`);
