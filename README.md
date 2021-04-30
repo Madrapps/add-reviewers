@@ -1,6 +1,6 @@
-# add-reviewer-action
+# Add Reviewers
 
-Github action that add Reviewers to the Pull Request
+Github action that adds Reviewers to the Pull Request
 
 ## Usage
 
