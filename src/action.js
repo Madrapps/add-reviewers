@@ -33,9 +33,9 @@ async function action() {
         //     pull_number: prNumber,
         // };
         // const response = await client.pulls.listRequestedReviewers(params1);
-        core.info(`requested Reviewers: ${response}`);
-        const response1 = JSON.stringify(response, undefined, 2)
-        console.log(`The event payload: ${response1}`);
+        // core.info(`requested Reviewers: ${response}`);
+        // const response1 = JSON.stringify(response, undefined, 2)
+        // console.log(`The event payload: ${response1}`);
 
         // Remove the current user who created the PR
         const finalReviewers = reviewers.filter(reviewer => reviewer != user);
