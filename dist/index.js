@@ -5934,6 +5934,14 @@ async function action() {
         // const response1 = JSON.stringify(response, undefined, 2)
         // console.log(`The event payload: ${response1}`);
 
+        const params1 = {
+            ...context.repo,
+            pull_number: prNumber,
+        };
+        const response = await client.pulls.listReviews(params1);
+        const response1 = JSON.stringify(response, undefined, 2)
+        core.info(`Reviews: ${response1}`);
+
         // Remove the current user who created the PR
         const finalReviewers = reviewers.filter(reviewer => reviewer != user);
         if (debugMode) core.info(`finalReviewers: ${finalReviewers}`);
