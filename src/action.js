@@ -79,7 +79,7 @@ async function action() {
         };
         await client.pulls.requestReviewers(params);
     } catch (error) {
-        core.setFailed(error.message);
+        core.setFailed(error);
     }
 }
 
