@@ -1,4 +1,5 @@
 # Add Reviewers
+[![Tests](https://github.com/Madrapps/add-reviewers/actions/workflows/check.yml/badge.svg)](https://github.com/Madrapps/add-reviewers/actions/workflows/check.yml)
 
 Github action that adds Reviewers to the Pull Request
 
